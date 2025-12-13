@@ -2,7 +2,11 @@ title: Execution from External Media (Windows)
 id: 28d8f894-c2da-44e5-aeb0-57a9ca0cb179
 description: Requires Plug and Play auditing on Windows, set by auditpol or Group Policy "auditpol /set /subcategory:'Plug and Play Events' /success:enable /failure:enable"
 author: Oliver W-J (github.com/DeadRed6)
-date: 2025-12-13
+date: 2025-12-10
+modified: 2025-12-13
+tags:
+    - attack.execution
+    - attack.t1204.002
 correlation:
   type: temporal_ordered
   rules:
