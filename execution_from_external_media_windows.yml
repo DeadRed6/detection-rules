@@ -1,0 +1,43 @@
+title: Execution from External Media (Windows)
+id: 28d8f894-c2da-44e5-aeb0-57a9ca0cb179
+description: Requires Plug and Play auditing on Windows, set by auditpol or Group Policy "auditpol /set /subcategory:'Plug and Play Events' /success:enable /failure:enable"
+author: Oliver W-J (github.com/DeadRed6)
+date: 2025-12-13
+correlation:
+  type: temporal_ordered
+  rules:
+    - new_pnp_device
+    - process_creation
+  group-by:
+    - ComputerName
+  timespan: 10s
+---
+title: External device plugin on Windows with drive letter present
+id: 1b36469d-a6da-41c9-abba-a72b0b1d1181
+description: Detects the presence of a new PnP device with a filesystem. Although Windows drive letters are not limited to A-Z, the regular expression covers the vast majority of cases.
+name: new_pnp_device
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 6416
+    ClassName: 'WPD'
+    DeviceDescription|re: '[A-Za-z]:\\.+'
+  condition: selection 
+---
+title: Process creation on Windows from external device
+id: 632d063e-34a1-4818-a79b-6dd57f4df70b
+description: Detects execution where the path name begins with the drive letter of the new device. Excludes C:\ as the most common drive letter. You must exclude other drive letters appearing in your environment such as network drives by adding to the list.
+name: process_creation
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4688
+  exclusion:
+    Image|startswith:
+      - 'C:\'
+  condition: selection and not exclusion 
+
