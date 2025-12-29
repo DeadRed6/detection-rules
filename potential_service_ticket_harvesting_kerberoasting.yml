@@ -1,0 +1,28 @@
+title: Potential harvesting of encrypted service tickets for Kerberoasting
+id: c560a051-546c-43e1-96c3-495af5c4a505
+description: Detects a large number of EventID 4769 from a single user, requesting multiple different Service Principal Names (SPNs), as might be generated through naive/noisy use of abusive tools like Rubeus.
+author: Oliver W-J (github.com/DeadRed6)
+date: 2025-12-29
+tags:
+    - attack.credential-access
+    - attack.t1558.003 
+correlation:
+  type: value_count
+  rules: service_ticket_requested
+  group-by:
+	- IpAddress
+  timespan: 1m
+  condition:
+	field: ServiceName
+	gte: 5
+---
+title: Single EventID 4769 (A Kerberos service ticket was requested)
+id: 494aa1ca-74ac-4d0c-8b2a-e6b4819e636b
+name: service_ticket_requested
+logsource:
+  product: windows
+  service: security 
+detection:
+	selection:
+		EventID: 4769
+	condition: selection
